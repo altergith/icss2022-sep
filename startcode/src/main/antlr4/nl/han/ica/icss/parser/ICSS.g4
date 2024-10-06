@@ -45,5 +45,8 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: EOF;
-
+attributes: LOWER_IDENT COLON (COLOR | PIXELSIZE) SEMICOLON;
+stylerule: LOWER_IDENT OPEN_BRACE attributes+ CLOSE_BRACE;
+id: ID_IDENT OPEN_BRACE attributes+ CLOSE_BRACE;
+class: CLASS_IDENT OPEN_BRACE attributes+ CLOSE_BRACE;
+stylesheet:  (stylerule | id | class )+ EOF;
