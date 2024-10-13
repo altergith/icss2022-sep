@@ -124,13 +124,13 @@ public class ASTListener extends ICSSBaseListener {
     }
 
     @Override
-    public void enterVariableDeclaration(ICSSParser.VariableDeclarationContext ctx) {
+    public void enterVariableAssignment(ICSSParser.VariableAssignmentContext ctx) {
         VariableAssignment variableAssignment = new VariableAssignment();
         currentContainer.push(variableAssignment);
     }
 
     @Override
-    public void exitVariableDeclaration(ICSSParser.VariableDeclarationContext ctx) {
+    public void exitVariableAssignment(ICSSParser.VariableAssignmentContext ctx) {
         VariableAssignment variableAssignment = (VariableAssignment) currentContainer.pop();
         currentContainer.peek().addChild(variableAssignment);
     }
@@ -160,13 +160,25 @@ public class ASTListener extends ICSSBaseListener {
     }
 
     @Override
-    public void enterCapitelIndent(ICSSParser.CapitelIndentContext ctx) {
+    public void enterBool(ICSSParser.BoolContext ctx) {
+        BoolLiteral boolLiteral = new BoolLiteral(ctx.getText());
+        currentContainer.push(boolLiteral);
+    }
+
+    @Override
+    public void exitBool(ICSSParser.BoolContext ctx) {
+        BoolLiteral boolLiteral = (BoolLiteral) currentContainer.pop();
+        currentContainer.peek().addChild(boolLiteral);
+    }
+
+    @Override
+    public void enterVariableReference(ICSSParser.VariableReferenceContext ctx) {
         VariableReference variableReference = new VariableReference(ctx.getText());
         currentContainer.push(variableReference);
     }
 
     @Override
-    public void exitCapitelIndent(ICSSParser.CapitelIndentContext ctx) {
+    public void exitVariableReference(ICSSParser.VariableReferenceContext ctx) {
         VariableReference variableReference = (VariableReference) currentContainer.pop();
         currentContainer.peek().addChild(variableReference);
     }

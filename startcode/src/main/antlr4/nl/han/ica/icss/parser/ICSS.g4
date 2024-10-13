@@ -45,13 +45,14 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-variableDeclaration: CAPITAL_IDENT ASSIGNMENT_OPERATOR (COLOR | PIXELSIZE | TRUE | FALSE) SEMICOLON;
-
-propertyName: LOWER_IDENT;
 color: COLOR;
 pixelSize: PIXELSIZE;
-capitelIndent: CAPITAL_IDENT;
-value: (color | pixelSize | capitelIndent);
+bool: (TRUE | FALSE);
+variableReference: CAPITAL_IDENT;
+variableAssignment: variableReference ASSIGNMENT_OPERATOR (color | pixelSize | bool) SEMICOLON;
+
+propertyName: LOWER_IDENT;
+value: (color | pixelSize | variableReference);
 
 decleration: propertyName COLON value SEMICOLON;
 
@@ -60,4 +61,4 @@ idSelector: ID_IDENT;
 classSelector: CLASS_IDENT;
 
 stylerule: (tagSelector | idSelector | classSelector) OPEN_BRACE decleration+ CLOSE_BRACE;
-stylesheet:  (variableDeclaration | stylerule)+ EOF;
+stylesheet:  (variableAssignment | stylerule)+ EOF;
