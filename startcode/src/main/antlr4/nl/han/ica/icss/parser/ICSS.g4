@@ -45,5 +45,19 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: EOF;
+variableDeclaration: CAPITAL_IDENT ASSIGNMENT_OPERATOR (COLOR | PIXELSIZE | TRUE | FALSE) SEMICOLON;
 
+propertyName: LOWER_IDENT;
+color: COLOR;
+pixelSize: PIXELSIZE;
+capitelIndent: CAPITAL_IDENT;
+value: (color | pixelSize | capitelIndent);
+
+decleration: propertyName COLON value SEMICOLON;
+
+tagSelector: LOWER_IDENT;
+idSelector: ID_IDENT;
+classSelector: CLASS_IDENT;
+
+stylerule: (tagSelector | idSelector | classSelector) OPEN_BRACE decleration+ CLOSE_BRACE;
+stylesheet:  (variableDeclaration | stylerule)+ EOF;
