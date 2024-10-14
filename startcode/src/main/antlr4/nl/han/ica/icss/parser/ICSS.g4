@@ -47,14 +47,23 @@ ASSIGNMENT_OPERATOR: ':=';
 //--- PARSER: ---
 color: COLOR;
 pixelSize: PIXELSIZE;
+percentage: PERCENTAGE; // schrijf nog een test voor percentage
 bool: (TRUE | FALSE);
 variableReference: CAPITAL_IDENT;
-variableAssignment: variableReference ASSIGNMENT_OPERATOR (color | pixelSize | bool) SEMICOLON;
 
 propertyName: LOWER_IDENT;
-value: (color | pixelSize | variableReference);
+value: (color | pixelSize | percentage | variableReference);
 
-decleration: propertyName COLON value SEMICOLON;
+expression
+ : expression (MUL) expression #multiplyOperation
+ | expression (PLUS) expression #addOperation
+ | expression (MIN) expression #subtractOperation
+ | SCALAR #scalar
+ | value #expressionValue;
+
+variableAssignment: variableReference ASSIGNMENT_OPERATOR (color | pixelSize | bool) SEMICOLON;
+
+decleration: propertyName COLON (value | expression) SEMICOLON;
 
 tagSelector: LOWER_IDENT;
 idSelector: ID_IDENT;
@@ -62,3 +71,5 @@ classSelector: CLASS_IDENT;
 
 stylerule: (tagSelector | idSelector | classSelector) OPEN_BRACE decleration+ CLOSE_BRACE;
 stylesheet:  (variableAssignment | stylerule)+ EOF;
+
+// GEBRUIK de label #pixelSize voor extra enter en exit methode

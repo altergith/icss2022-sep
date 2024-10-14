@@ -50,6 +50,4 @@ public interface IHANLinkedList<T> {
      * @return number of items in list
      */
     int getSize();
-
-    Iterator iterator();
 }
