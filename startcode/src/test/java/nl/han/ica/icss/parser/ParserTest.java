@@ -81,4 +81,11 @@ class ParserTest {
 		AST exp = Fixtures.uncheckedLevel3();
 		assertEquals(exp,sut);
 	}
+    @Test
+    void testParseElseIf() throws IOException {
+
+        AST sut = parseTestFile("TestElseIf.icss");
+        AST exp = Fixtures.uncheckedTestElseIf();
+        assertEquals(exp,sut);
+    }
 }

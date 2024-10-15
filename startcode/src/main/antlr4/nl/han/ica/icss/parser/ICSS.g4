@@ -65,11 +65,14 @@ variableAssignment: variableReference ASSIGNMENT_OPERATOR (color | pixelSize | b
 
 decleration: propertyName COLON (value | expression) SEMICOLON;
 
+elseClause: ELSE OPEN_BRACE (decleration | ifClause)+ CLOSE_BRACE;
+ifClause: IF BOX_BRACKET_OPEN variableReference BOX_BRACKET_CLOSE OPEN_BRACE (decleration | ifClause)+ CLOSE_BRACE elseClause?;
+
 tagSelector: LOWER_IDENT;
 idSelector: ID_IDENT;
 classSelector: CLASS_IDENT;
 
-stylerule: (tagSelector | idSelector | classSelector) OPEN_BRACE decleration+ CLOSE_BRACE;
+stylerule: (tagSelector | idSelector | classSelector) OPEN_BRACE (decleration | ifClause)+ CLOSE_BRACE;
 stylesheet:  (variableAssignment | stylerule)+ EOF;
 
 // GEBRUIK de label #pixelSize voor extra enter en exit methode
