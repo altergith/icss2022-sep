@@ -44,7 +44,7 @@ public class Checker {
 
     private void checkDeclaration(Declaration node) {
         if(node.property.name.equals("width") || node.property.name.equals("height")){
-            if(!(node.expression instanceof PixelLiteral) && !(node.expression instanceof PercentageLiteral)){
+            if(!(node.expression instanceof PixelLiteral) && !(node.expression instanceof PercentageLiteral) && !(node.expression instanceof Operation)){ // pas dit nog aan
                 node.expression.setError("Property name '"+ node.property.name + "' got assigned an invalid type: " + node.expression.getClass().getSimpleName());
             }
         }
