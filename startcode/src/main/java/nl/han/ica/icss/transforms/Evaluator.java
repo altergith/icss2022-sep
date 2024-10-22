@@ -32,7 +32,10 @@ public class Evaluator implements Transform {
     }
 
     private void applyStyleSheet(Stylesheet node) {
-        applyStyleRule((Stylerule) node.getChildren().get(0));
+        for (ASTNode child:node.getChildren()
+             ) {
+            applyStyleRule((Stylerule) child);
+        }
     }
 
     private void applyStyleRule(Stylerule node) {
@@ -50,9 +53,7 @@ public class Evaluator implements Transform {
     }
 
     private Expression evalExpression(Expression expression) {
-        System.out.println(expression);
         if (expression instanceof Operation) {
-            //  expression = evalOperation((Operation) expression);
             if (expression instanceof AddOperation) {
                 expression = evalAdd((AddOperation) expression);
             }
@@ -63,20 +64,12 @@ public class Evaluator implements Transform {
                 expression = evalMul((MultiplyOperation) expression);
             }
         }
-
-
-        System.out.println(expression);
-
         return expression;
     }
 
     private Literal evalMul(MultiplyOperation node) {
-
-        // Evaluate lhs and rhs recursively if they are operations
         Literal lhs = (node.lhs instanceof Operation) ? evalOperation((Operation) node.lhs) : (Literal) node.lhs;
         Literal rhs = (node.rhs instanceof Operation) ? evalOperation((Operation) node.rhs) : (Literal) node.rhs;
-
-        System.out.println(lhs + "" + rhs);
 
         if (lhs instanceof ScalarLiteral && rhs instanceof ScalarLiteral) {
             return new ScalarLiteral(((ScalarLiteral) lhs).value * ((ScalarLiteral) rhs).value);
