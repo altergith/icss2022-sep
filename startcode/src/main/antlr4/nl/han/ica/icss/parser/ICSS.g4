@@ -65,14 +65,14 @@ variableAssignment: variableReference ASSIGNMENT_OPERATOR (color | pixelSize | b
 
 decleration: propertyName COLON (value | expression) SEMICOLON;
 
-elseClause: ELSE OPEN_BRACE (decleration | ifClause)+ CLOSE_BRACE;
-ifClause: IF BOX_BRACKET_OPEN variableReference BOX_BRACKET_CLOSE OPEN_BRACE (decleration | ifClause)+ CLOSE_BRACE elseClause?;
+elseClause: ELSE OPEN_BRACE ( variableAssignment | decleration | ifClause)+ CLOSE_BRACE;
+ifClause: IF BOX_BRACKET_OPEN variableReference BOX_BRACKET_CLOSE OPEN_BRACE ( variableAssignment | decleration | ifClause)+ CLOSE_BRACE elseClause?;
 
 tagSelector: LOWER_IDENT;
 idSelector: ID_IDENT;
 classSelector: CLASS_IDENT;
 
-stylerule: (tagSelector | idSelector | classSelector) OPEN_BRACE (decleration | ifClause)+ CLOSE_BRACE;
+stylerule: (tagSelector | idSelector | classSelector) OPEN_BRACE ( variableAssignment | decleration | ifClause)+ CLOSE_BRACE;
 stylesheet:  (variableAssignment | stylerule)+ EOF;
 
 // maak een keuze over reassignen: niet voor extra punten

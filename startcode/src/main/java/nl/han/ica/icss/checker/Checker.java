@@ -18,7 +18,7 @@ public class Checker {
     public void check(AST ast) {
         variableTypes = new HANLinkedList<>();
         HashMap<String, ExpressionType> scope = new HashMap<>();
-        variableTypes.insert(0, scope);
+        variableTypes.addFirst(scope);
         for (ASTNode node : ast.root.getChildren()
              ) {
             if (node instanceof VariableAssignment) {
@@ -44,17 +44,25 @@ public class Checker {
         for (ASTNode child : node.getChildren()
         ) {
             if (child instanceof Stylerule) {
-                checkStylerule((Stylerule) child);
+                HashMap<String, ExpressionType> styleRuleScope = new HashMap<>();
+                variableTypes.addFirst(styleRuleScope);
+                checkStyleRule((Stylerule) child);
+                variableTypes.removeFirst();
+            }
+            if (child instanceof IfClause){
+                HashMap<String, ExpressionType> ifClauseScope = new HashMap<>();
+                variableTypes.addFirst(ifClauseScope);
+               //TODO checkIfClause((IfClause) child);
+                variableTypes.removeFirst();
             }
         }
     }
 
-    private void checkStylerule(Stylerule node) {
+    private void checkStyleRule(Stylerule node) {
         for (ASTNode child : node.getChildren()) {
             if (child instanceof Declaration) {
                 checkDeclaration((Declaration) child);
             }
-
         }
     }
 
@@ -63,10 +71,10 @@ public class Checker {
 
         if (node.property.name.equals("width") || node.property.name.equals("height")) {
 
-//            if(node.expression instanceof Operation){
-//                checkExpression(((Operation) node.expression).rhs);
-//                checkExpression(((Operation) node.expression).lhs);
-//            }
+            if(node.expression instanceof Operation){
+                checkExpression(((Operation) node.expression).rhs);
+                checkExpression(((Operation) node.expression).lhs);
+            }
 
             if(node.expression instanceof VariableReference) {
                 checkVariableReferenceOnSizeExpressionTypes(node);
@@ -85,18 +93,25 @@ public class Checker {
         }
     }
 
+    private void checkExpression(Expression handSide) {
+
+
+    }
 
     private void checkVariableReferenceOnSizeExpressionTypes(Declaration node) {
+        boolean isInScope = false;
         if ((variableTypes.getSize() > 0)) {
             for (int i = 0; i < variableTypes.getSize(); i++) {
                 if (variableTypes.get(i).containsKey(((VariableReference) node.expression).name)) {
+                    isInScope = true;
                     ExpressionType type = variableTypes.get(i).get(((VariableReference) node.expression).name);
                     if (type != ExpressionType.PIXEL && type != ExpressionType.PERCENTAGE) {
                         node.expression.setError("Property '" + node.property.name + "' with Variable reference: '" + ((VariableReference) node.expression).name + "' got assigned an invalid type: " + type);
                     }
-                } else {
-                    node.expression.setError("Variable reference: '" + ((VariableReference) node.expression).name + "' is not defined");
                 }
+            }
+            if (!isInScope) {
+                node.expression.setError("Variable reference: '" + ((VariableReference) node.expression).name + "' is not defined");
             }
         } else {
             node.expression.setError("Variable reference: '" + ((VariableReference) node.expression).name + "' is not defined");
@@ -105,15 +120,18 @@ public class Checker {
 
 
     private void checkVariableReferenceOnExpressionType(Declaration node, ExpressionType type) {
+        boolean isInScope = false;
             if ((variableTypes.getSize() > 0)) {
                 for (int i = 0; i < variableTypes.getSize(); i++) {
                     if (variableTypes.get(i).containsKey(((VariableReference) node.expression).name)) {
+                        isInScope = true;
                         if (variableTypes.get(i).get(((VariableReference) node.expression).name) != type) {
                             node.expression.setError("Property '" + node.property.name + "' with Variable reference: '" + ((VariableReference) node.expression).name + "' got assigned an invalid type: " + variableTypes.get(i).get(((VariableReference) node.expression).name));
                         }
-                    } else {
-                        node.expression.setError("Variable reference: '" + ((VariableReference) node.expression).name + "' is not defined");
                     }
+                }
+                if (!isInScope) {
+                    node.expression.setError("Variable reference: '" + ((VariableReference) node.expression).name + "' is not defined");
                 }
             } else {
                 node.expression.setError("Variable reference: '" + ((VariableReference) node.expression).name + "' is not defined");
