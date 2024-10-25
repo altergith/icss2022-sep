@@ -31,10 +31,6 @@ public class Generator {
 
     private String generateStyleRule(Stylerule stylerule) {
         String result = "";
-//        for (Selector sa:stylerule.selectors
-//             ) {
-//
-//        }
         result += stylerule.selectors.get(0) + " {\n ";
         for (ASTNode child: stylerule.body
              ) {

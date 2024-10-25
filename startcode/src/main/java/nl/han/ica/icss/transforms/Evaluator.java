@@ -21,7 +21,8 @@ public class Evaluator implements Transform {
     private IHANLinkedList<HashMap<String, Literal>> variableValues;
 
     public Evaluator() {
-        //variableValues = new HANLinkedList<>();
+        variableValues = new HANLinkedList<>();
+
     }
 
     @Override
