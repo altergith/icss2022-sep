@@ -66,7 +66,7 @@ variableAssignment: variableReference ASSIGNMENT_OPERATOR (color | pixelSize | b
 decleration: propertyName COLON (value | expression) SEMICOLON;
 
 elseClause: ELSE OPEN_BRACE ( variableAssignment | decleration | ifClause)+ CLOSE_BRACE;
-ifClause: IF BOX_BRACKET_OPEN variableReference BOX_BRACKET_CLOSE OPEN_BRACE ( variableAssignment | decleration | ifClause)+ CLOSE_BRACE elseClause?;
+ifClause: IF BOX_BRACKET_OPEN (variableReference | bool ) BOX_BRACKET_CLOSE OPEN_BRACE ( variableAssignment | decleration | ifClause)+ CLOSE_BRACE elseClause?;
 
 tagSelector: LOWER_IDENT;
 idSelector: ID_IDENT;

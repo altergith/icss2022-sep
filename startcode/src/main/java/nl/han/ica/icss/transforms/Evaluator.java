@@ -4,12 +4,11 @@ import nl.han.ica.datastructures.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.datastructures.Node;
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.literals.PercentageLiteral;
-import nl.han.ica.icss.ast.literals.PixelLiteral;
-import nl.han.ica.icss.ast.literals.ScalarLiteral;
+import nl.han.ica.icss.ast.literals.*;
 import nl.han.ica.icss.ast.operations.AddOperation;
 import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.operations.SubtractOperation;
+import nl.han.ica.icss.ast.types.ExpressionType;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -28,25 +27,117 @@ public class Evaluator implements Transform {
     @Override
     public void apply(AST ast) {
         variableValues = new HANLinkedList<>();
-        applyStyleSheet((Stylesheet) ast.root);
-
+        HashMap<String, Literal> variables = new HashMap<>();
+        variableValues.addFirst(variables);
+        applyStyleSheet(ast.root);
+        variableValues.removeFirst();
     }
 
     private void applyStyleSheet(Stylesheet node) {
         for (ASTNode child:node.getChildren()
              ) {
-            applyStyleRule((Stylerule) child);
+            if (child instanceof VariableAssignment){
+                variableValues.getFirst().put(((VariableAssignment) child).name.name, (Literal) ((VariableAssignment) child).expression);
+            }
+            if (child instanceof Stylerule) {
+                applyStyleRule((Stylerule) child);
+            }
         }
     }
 
     private void applyStyleRule(Stylerule node) {
+        HashMap<String, Literal> styleRuleScope = new HashMap<>();
+        variableValues.addFirst(styleRuleScope);
         for (ASTNode child : node.getChildren()
         ) {
+
+            if(child instanceof VariableAssignment){
+                styleRuleScope.put(((VariableAssignment) child).name.name, (Literal) ((VariableAssignment) child).expression);
+            }
             if (child instanceof Declaration) {
                 applyDeclaration((Declaration) child);
             }
+            if (child instanceof IfClause){
+                applyIfClause((IfClause) child, node);
+            }
 
         }
+    }
+
+    private void applyIfClause(IfClause child, Stylerule stylerule) {
+        if(applyConditionalExpression(child.conditionalExpression)){
+            applyIfClauseBody(child, stylerule);
+        } else {
+            if(child.elseClause != null){
+                applyElseClause(child.elseClause, stylerule, child);
+            }
+        }
+    }
+
+    private void applyElseClause(ElseClause elseClause, Stylerule stylerule, IfClause ifClause) {
+        HashMap<String, Literal> elseClauseScope = new HashMap<>();
+        variableValues.addFirst(elseClauseScope);
+
+        for (ASTNode node: elseClause.body
+             ) {
+            if(node instanceof VariableAssignment){
+                elseClauseScope.put(((VariableAssignment) node).name.name, (Literal) ((VariableAssignment) node).expression);
+            }
+            if(node instanceof Declaration){
+                applyDeclaration((Declaration) node);
+            }
+            if(node instanceof IfClause) {
+                applyIfClause((IfClause) node, stylerule);
+            }
+            stylerule.body.add(stylerule.body.indexOf(ifClause),node);
+        }
+        stylerule.body.remove(ifClause);
+        variableValues.removeFirst();
+    }
+
+    private void applyIfClauseBody(IfClause child, Stylerule stylerule) {
+        HashMap<String, Literal> ifClauseScope = new HashMap<>();
+        variableValues.addFirst(ifClauseScope);
+
+        for (ASTNode node: child.body) {
+            if(node instanceof VariableAssignment){
+                ifClauseScope.put(((VariableAssignment) node).name.name, (Literal) ((VariableAssignment) node).expression);
+            }
+            if (node instanceof ElseClause){
+                variableValues.removeFirst();
+                return;
+            }
+            stylerule.body.add(stylerule.body.indexOf(child),node);
+            if(node instanceof Declaration){
+                applyDeclaration((Declaration) node);
+            }
+            if(node instanceof IfClause) {
+                applyIfClause((IfClause) node, stylerule);
+            }
+        }
+        variableValues.removeFirst();
+        stylerule.body.remove(child);
+    }
+
+    private boolean applyConditionalExpression(Expression child) {
+        if(child instanceof VariableReference){
+            return  ((BoolLiteral)getValueOfVariableReference((VariableReference) child)).value;
+        }
+        if(child instanceof BoolLiteral){
+            return  ((BoolLiteral) child).value;
+        }
+        throw new IllegalArgumentException("Conditional expression not found");
+    }
+
+    private Literal getValueOfVariableReference(VariableReference child) {
+        if(variableValues.getSize() >0){
+         for(int i = 0; i < variableValues.getSize(); i++){
+             if(variableValues.get(i).containsKey(child.name)){
+                 return variableValues.get(i).get(child.name);
+             }
+         }
+        }
+        throw new IllegalArgumentException("Variable not found");
     }
 
     private void applyDeclaration(Declaration node) {
