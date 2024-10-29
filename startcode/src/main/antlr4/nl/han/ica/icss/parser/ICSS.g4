@@ -61,7 +61,7 @@ expression
  | SCALAR #scalar
  | value #expressionValue;
 
-variableAssignment: variableReference ASSIGNMENT_OPERATOR (color | pixelSize | bool) SEMICOLON;
+variableAssignment: variableReference ASSIGNMENT_OPERATOR (color | pixelSize | bool | percentage | expression) SEMICOLON;
 
 decleration: propertyName COLON (value | expression) SEMICOLON;
 
