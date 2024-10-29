@@ -160,8 +160,9 @@ public class Evaluator implements Transform {
     }
 
     private Literal evalMul(MultiplyOperation node) {
-        Literal lhs = (node.lhs instanceof Operation) ? evalOperation((Operation) node.lhs) : (Literal) node.lhs;
-        Literal rhs = (node.rhs instanceof Operation) ? evalOperation((Operation) node.rhs) : (Literal) node.rhs;
+
+        Literal lhs = evalLhsLiteral(node);
+        Literal rhs = evalRhsLiteral(node);
 
         if (lhs instanceof ScalarLiteral && rhs instanceof ScalarLiteral) {
             return new ScalarLiteral(((ScalarLiteral) lhs).value * ((ScalarLiteral) rhs).value);
@@ -176,11 +177,11 @@ public class Evaluator implements Transform {
         }
 
         if (lhs instanceof PercentageLiteral && rhs instanceof ScalarLiteral) {
-            return new ScalarLiteral(((PercentageLiteral) lhs).value * ((ScalarLiteral) rhs).value);
+            return new PercentageLiteral(((PercentageLiteral) lhs).value * ((ScalarLiteral) rhs).value);
         }
 
         if (lhs instanceof ScalarLiteral && rhs instanceof PercentageLiteral) {
-            return new ScalarLiteral(((ScalarLiteral) lhs).value * ((PercentageLiteral) rhs).value);
+            return new PercentageLiteral(((ScalarLiteral) lhs).value * ((PercentageLiteral) rhs).value);
         }
 
         return null;
@@ -189,8 +190,8 @@ public class Evaluator implements Transform {
 
     private Literal evalSubtract(SubtractOperation node) {
 
-        Literal lhs = (node.lhs instanceof Operation) ? evalOperation((Operation) node.lhs) : (Literal) node.lhs;
-        Literal rhs = (node.rhs instanceof Operation) ? evalOperation((Operation) node.rhs) : (Literal) node.rhs;
+        Literal lhs = evalLhsLiteral(node);
+        Literal rhs = evalRhsLiteral(node);
 
         if (lhs instanceof ScalarLiteral && rhs instanceof ScalarLiteral) {
             return new ScalarLiteral(((ScalarLiteral) lhs).value - ((ScalarLiteral) rhs).value);
@@ -210,16 +211,8 @@ public class Evaluator implements Transform {
 
     private Literal evalAdd(AddOperation node) {
 
-        if (node.lhs instanceof VariableReference){
-            node.lhs = getValueOfVariableReference((VariableReference) node.lhs);
-        }
-
-        if (node.rhs instanceof VariableReference){
-            node.rhs = getValueOfVariableReference((VariableReference) node.rhs);
-        }
-
-        Literal lhs = (node.lhs instanceof Operation) ? evalOperation((Operation) node.lhs) : (Literal) node.lhs;
-        Literal rhs = (node.rhs instanceof Operation) ? evalOperation((Operation) node.rhs) : (Literal) node.rhs;
+        Literal lhs = evalLhsLiteral(node);
+        Literal rhs = evalRhsLiteral(node);
 
         if (lhs instanceof ScalarLiteral && rhs instanceof ScalarLiteral) {
             return new ScalarLiteral(((ScalarLiteral) lhs).value + ((ScalarLiteral) rhs).value);
@@ -235,6 +228,25 @@ public class Evaluator implements Transform {
         return null;
     }
 
+    private Literal evalLhsLiteral(Operation node) {
+        Literal lhs;
+        if(node.lhs instanceof VariableReference){
+            lhs = getValueOfVariableReference((VariableReference) node.lhs);
+        } else {
+            lhs = (node.lhs instanceof Operation) ? evalOperation((Operation) node.lhs) : (Literal) node.lhs;
+        }
+        return lhs;
+    }
+
+    private Literal evalRhsLiteral(Operation node) {
+        Literal rhs;
+        if(node.rhs instanceof VariableReference){
+            rhs = getValueOfVariableReference((VariableReference) node.rhs);
+        } else {
+            rhs = (node.rhs instanceof Operation) ? evalOperation((Operation) node.rhs) : (Literal) node.rhs;
+        }
+        return rhs;
+    }
 
     private Literal evalOperation(Operation node) {
         Literal result = null;
