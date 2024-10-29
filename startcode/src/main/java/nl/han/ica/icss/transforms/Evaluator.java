@@ -210,6 +210,14 @@ public class Evaluator implements Transform {
 
     private Literal evalAdd(AddOperation node) {
 
+        if (node.lhs instanceof VariableReference){
+            node.lhs = getValueOfVariableReference((VariableReference) node.lhs);
+        }
+
+        if (node.rhs instanceof VariableReference){
+            node.rhs = getValueOfVariableReference((VariableReference) node.rhs);
+        }
+
         Literal lhs = (node.lhs instanceof Operation) ? evalOperation((Operation) node.lhs) : (Literal) node.lhs;
         Literal rhs = (node.rhs instanceof Operation) ? evalOperation((Operation) node.rhs) : (Literal) node.rhs;
 
@@ -237,9 +245,6 @@ public class Evaluator implements Transform {
             result = evalSubtract((SubtractOperation) node);
         } else if (node instanceof MultiplyOperation) {
             result = evalMul((MultiplyOperation) node);
-        }
-        if (result != null) {
-            return result;
         }
         return result;
     }
