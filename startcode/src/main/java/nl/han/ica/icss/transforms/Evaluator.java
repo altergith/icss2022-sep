@@ -37,6 +37,7 @@ public class Evaluator implements Transform {
         for (ASTNode child:node.getChildren()
              ) {
             if (child instanceof VariableAssignment){
+                applyAssignment((VariableAssignment) child);
                 variableValues.getFirst().put(((VariableAssignment) child).name.name, (Literal) ((VariableAssignment) child).expression);
             }
             if (child instanceof Stylerule) {
@@ -52,6 +53,7 @@ public class Evaluator implements Transform {
         ) {
 
             if(child instanceof VariableAssignment){
+                applyAssignment((VariableAssignment) child);
                 styleRuleScope.put(((VariableAssignment) child).name.name, (Literal) ((VariableAssignment) child).expression);
             }
             if (child instanceof Declaration) {
@@ -81,6 +83,7 @@ public class Evaluator implements Transform {
         for (ASTNode node: elseClause.body
              ) {
             if(node instanceof VariableAssignment){
+                applyAssignment((VariableAssignment) node);
                 elseClauseScope.put(((VariableAssignment) node).name.name, (Literal) ((VariableAssignment) node).expression);
             }
             if(node instanceof Declaration){
@@ -95,12 +98,21 @@ public class Evaluator implements Transform {
         variableValues.removeFirst();
     }
 
+    private void applyAssignment(VariableAssignment node) {
+        if(node.expression instanceof VariableReference){
+            node.expression = getValueOfVariableReference((VariableReference) node.expression);
+        } else {
+            node.expression = evalExpression(node.expression);
+        }
+    }
+
     private void applyIfClauseBody(IfClause child, Stylerule stylerule) {
         HashMap<String, Literal> ifClauseScope = new HashMap<>();
         variableValues.addFirst(ifClauseScope);
 
         for (ASTNode node: child.body) {
             if(node instanceof VariableAssignment){
+                applyAssignment((VariableAssignment) node);
                 ifClauseScope.put(((VariableAssignment) node).name.name, (Literal) ((VariableAssignment) node).expression);
             }
             if (node instanceof ElseClause){
@@ -137,7 +149,7 @@ public class Evaluator implements Transform {
              }
          }
         }
-        throw new IllegalArgumentException("Variable not found");
+        throw new IllegalArgumentException("Variable not defined");
     }
 
     private void applyDeclaration(Declaration node) {
