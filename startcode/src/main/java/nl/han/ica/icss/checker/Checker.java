@@ -111,7 +111,7 @@ public class Checker {
     private void checkDeclaration(Declaration node) {
         ExpressionType nodeType = getExpressionType(node.expression);
         if (node.property.name.equals("width") || node.property.name.equals("height")) {
-            if (!(nodeType == ExpressionType.PERCENTAGE) && !(nodeType == ExpressionType.PIXEL)) { // maak if statements voor de mogelijke expressiontypes voor betere foutmeldingen?
+            if (!(nodeType == ExpressionType.PERCENTAGE) && !(nodeType == ExpressionType.PIXEL)) {
                 if(nodeType == ExpressionType.UNDEFINED){
                     node.setError("Property name '" + node.property.name + "' got assigned an invalid OPERATION or VARIABLE REFERENCE");
                 } else {

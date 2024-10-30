@@ -73,6 +73,3 @@ classSelector: CLASS_IDENT;
 
 stylerule: (tagSelector | idSelector | classSelector) OPEN_BRACE ( variableAssignment | decleration | ifClause)+ CLOSE_BRACE;
 stylesheet:  (variableAssignment | stylerule)+ EOF;
-
-// maak een keuze over reassignen: niet voor extra punten
-// GEBRUIK de label #pixelSize voor extra enter en exit methode

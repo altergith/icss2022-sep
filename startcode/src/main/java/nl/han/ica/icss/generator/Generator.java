@@ -5,16 +5,11 @@ import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.literals.ColorLiteral;
 import nl.han.ica.icss.ast.literals.PercentageLiteral;
 import nl.han.ica.icss.ast.literals.PixelLiteral;
-import org.checkerframework.checker.units.qual.C;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Objects;
 
 public class Generator {
 
     public String generate(AST ast) {
-        return generateStylesheet((Stylesheet) ast.root);
+        return generateStylesheet(ast.root);
     }
 
     private String generateStylesheet(Stylesheet node) {
