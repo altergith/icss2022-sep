@@ -26,10 +26,10 @@ public class Generator {
 
     private String generateStyleRule(Stylerule stylerule) {
         String result = "";
-        result += stylerule.selectors.get(0) + " {\n ";
+        result += stylerule.selectors.get(0) + " {\n";
         for (ASTNode child : stylerule.body
         ) {
-            result += "\t";
+            result += "  ";
             result += generateDeclaration((Declaration) child);
             result += "\n";
         }
