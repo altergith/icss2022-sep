@@ -16,7 +16,6 @@ public class Evaluator implements Transform {
 
     public Evaluator() {
         variableValues = new HANLinkedList<>();
-
     }
 
     @Override
@@ -29,8 +28,7 @@ public class Evaluator implements Transform {
     }
 
     private void applyStyleSheet(Stylesheet node) {
-        for (ASTNode child:node.getChildren()
-             ) {
+        for (ASTNode child:node.getChildren()) {
             if (child instanceof VariableAssignment){
                 applyAssignment((VariableAssignment) child);
                 variableValues.getFirst().put(((VariableAssignment) child).name.name, (Literal) ((VariableAssignment) child).expression);
@@ -44,8 +42,7 @@ public class Evaluator implements Transform {
     private void applyStyleRule(Stylerule node) {
         HashMap<String, Literal> styleRuleScope = new HashMap<>();
         variableValues.addFirst(styleRuleScope);
-        for (ASTNode child : node.getChildren()
-        ) {
+        for (ASTNode child : node.getChildren()) {
 
             applyBody(node, styleRuleScope, child);
 
@@ -79,8 +76,7 @@ public class Evaluator implements Transform {
         HashMap<String, Literal> elseClauseScope = new HashMap<>();
         variableValues.addFirst(elseClauseScope);
 
-        for (ASTNode node: elseClause.body
-             ) {
+        for (ASTNode node: elseClause.body) {
             applyBody(stylerule, elseClauseScope, node);
             stylerule.body.add(stylerule.body.indexOf(ifClause),node);
         }

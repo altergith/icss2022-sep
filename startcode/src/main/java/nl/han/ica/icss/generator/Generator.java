@@ -14,8 +14,7 @@ public class Generator {
 
     private String generateStylesheet(Stylesheet node) {
         String result = "";
-        for (ASTNode child : node.getChildren()
-        ) {
+        for (ASTNode child : node.getChildren()) {
             if (child instanceof Stylerule) {
                 result += generateStyleRule((Stylerule) child);
                 result += "\n";
@@ -27,10 +26,10 @@ public class Generator {
     private String generateStyleRule(Stylerule stylerule) {
         String result = "";
         result += stylerule.selectors.get(0) + " {\n";
-        for (ASTNode child : stylerule.body
-        ) {
+        for (ASTNode child : stylerule.body) {
             result += "  ";
             result += generateDeclaration((Declaration) child);
+            result += ";";
             result += "\n";
         }
         result += "}";

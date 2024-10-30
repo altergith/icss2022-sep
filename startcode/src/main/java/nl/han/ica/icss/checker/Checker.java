@@ -45,8 +45,7 @@ public class Checker {
     }
 
     private void checkStylesheet(Stylesheet node) {
-        for (ASTNode child : node.getChildren()
-        ) {
+        for (ASTNode child : node.getChildren()) {
             if (child instanceof VariableAssignment) {
                 checkVariableAssignment((VariableAssignment) child);
                 variableTypes.getFirst().put(((VariableAssignment) child).name.name, getExpressionType(((VariableAssignment) child).expression));
@@ -78,8 +77,7 @@ public class Checker {
         HashMap<String, ExpressionType> ifClauseScope = new HashMap<>();
         variableTypes.addFirst(ifClauseScope);
 
-        for (ASTNode node : child.body
-        ) {
+        for (ASTNode node : child.body) {
             checkBody(node, ifClauseScope);
         }
         variableTypes.removeFirst();
