@@ -1,0 +1,17 @@
+p {
+    width: #ffffff;
+    width: 34px;
+    width: 20%;
+    height: 34%;
+    height: #ffffff;
+    height: 4px;
+}
+
+a {
+    color: #ffffff;
+    color: 3px;
+    color: 40%;
+    background-color: #ffffff;
+    background-color: 2px;
+    background-color: 40%;
+}
