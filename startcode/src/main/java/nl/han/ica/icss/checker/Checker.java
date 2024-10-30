@@ -48,6 +48,7 @@ public class Checker {
         for (ASTNode child : node.getChildren()
         ) {
             if (child instanceof VariableAssignment) {
+                checkVariableAssignment((VariableAssignment) child);
                 variableTypes.getFirst().put(((VariableAssignment) child).name.name, getExpressionType(((VariableAssignment) child).expression));
             }
             if (child instanceof Stylerule) {
@@ -56,19 +57,18 @@ public class Checker {
         }
     }
 
+    private void checkVariableAssignment(VariableAssignment child) {
+        ExpressionType expressionType = getExpressionType(child.expression);
+        if(expressionType == ExpressionType.SCALAR){
+            child.setError("Variable assignment got assigned with invalid type: " + expressionType);
+        }
+    }
+
     private void checkStyleRule(Stylerule node) {
         HashMap<String, ExpressionType> styleRuleScope = new HashMap<>();
         variableTypes.addFirst(styleRuleScope);
         for (ASTNode child : node.getChildren()) {
-            if (child instanceof VariableAssignment) {
-                styleRuleScope.put(((VariableAssignment) child).name.name, getExpressionType(((VariableAssignment) child).expression));
-            }
-            if (child instanceof Declaration) {
-                checkDeclaration((Declaration) child);
-            }
-            if (child instanceof IfClause) {
-                checkIfClause((IfClause) child);
-            }
+           checkBody(child, styleRuleScope);
         }
         variableTypes.removeFirst();
     }
@@ -80,19 +80,23 @@ public class Checker {
 
         for (ASTNode node : child.body
         ) {
-            if (node instanceof VariableAssignment) {
-                ifClauseScope.put(((VariableAssignment) node).name.name, getExpressionType(((VariableAssignment) node).expression));
-            }
-
-            if (node instanceof Declaration) {
-                checkDeclaration((Declaration) node);
-            }
-
-            if (node instanceof IfClause) {
-                checkIfClause((IfClause) node);
-            }
+            checkBody(node, ifClauseScope);
         }
         variableTypes.removeFirst();
+    }
+
+    private void checkBody(ASTNode node, HashMap<String, ExpressionType> scope) {
+        if (node instanceof VariableAssignment) {
+            scope.put(((VariableAssignment) node).name.name, getExpressionType(((VariableAssignment) node).expression));
+        }
+
+        if (node instanceof Declaration) {
+            checkDeclaration((Declaration) node);
+        }
+
+        if (node instanceof IfClause) {
+            checkIfClause((IfClause) node);
+        }
     }
 
     private void checkCondition(ASTNode node) {
@@ -107,7 +111,6 @@ public class Checker {
         ExpressionType nodeType = getExpressionType(node.expression);
 
         if (node.property.name.equals("width") || node.property.name.equals("height")) {
-            // check the expressiontype of the operation
             if (!(nodeType == ExpressionType.PERCENTAGE) && !(nodeType == ExpressionType.PIXEL)) { // maak if statements voor de mogelijke expressiontypes voor betere foutmeldingen?
                 node.expression.setError("Property name '" + node.property.name + "' got assigned an invalid type: " + node.expression.getClass().getSimpleName());
             }
