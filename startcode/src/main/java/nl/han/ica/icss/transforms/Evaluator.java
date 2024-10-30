@@ -52,17 +52,21 @@ public class Evaluator implements Transform {
         for (ASTNode child : node.getChildren()
         ) {
 
-            if(child instanceof VariableAssignment){
-                applyAssignment((VariableAssignment) child);
-                styleRuleScope.put(((VariableAssignment) child).name.name, (Literal) ((VariableAssignment) child).expression);
-            }
-            if (child instanceof Declaration) {
-                applyDeclaration((Declaration) child);
-            }
-            if (child instanceof IfClause){
-                applyIfClause((IfClause) child, node);
-            }
+            applyBody(node, styleRuleScope, child);
 
+        }
+    }
+
+    private void applyBody(Stylerule node, HashMap<String, Literal> styleRuleScope, ASTNode child) {
+        if(child instanceof VariableAssignment){
+            applyAssignment((VariableAssignment) child);
+            styleRuleScope.put(((VariableAssignment) child).name.name, (Literal) ((VariableAssignment) child).expression);
+        }
+        if (child instanceof Declaration) {
+            applyDeclaration((Declaration) child);
+        }
+        if (child instanceof IfClause){
+            applyIfClause((IfClause) child, node);
         }
     }
 
@@ -82,16 +86,7 @@ public class Evaluator implements Transform {
 
         for (ASTNode node: elseClause.body
              ) {
-            if(node instanceof VariableAssignment){
-                applyAssignment((VariableAssignment) node);
-                elseClauseScope.put(((VariableAssignment) node).name.name, (Literal) ((VariableAssignment) node).expression);
-            }
-            if(node instanceof Declaration){
-                applyDeclaration((Declaration) node);
-            }
-            if(node instanceof IfClause) {
-                applyIfClause((IfClause) node, stylerule);
-            }
+            applyBody(stylerule, elseClauseScope, node);
             stylerule.body.add(stylerule.body.indexOf(ifClause),node);
         }
         stylerule.body.remove(ifClause);
