@@ -46,12 +46,12 @@ public class Generator {
 
         if (node.expression instanceof PixelLiteral) {
             PixelLiteral l = (PixelLiteral) node.expression;
-            result += node.property.name + ": " + l.value;
+            result += node.property.name + ": " + l.value + "px";
         }
 
         if (node.expression instanceof PercentageLiteral) {
             PercentageLiteral l = (PercentageLiteral) node.expression;
-            result += node.property.name + ": " + l.value;
+            result += node.property.name + ": " + l.value + "%";
         }
         return result;
     }
