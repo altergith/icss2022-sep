@@ -30,14 +30,14 @@ public class Generator {
         for (ASTNode child : stylerule.body
         ) {
             result += "\t";
-            result += generateDecleration((Declaration) child);
+            result += generateDeclaration((Declaration) child);
             result += "\n";
         }
         result += "}";
         return result;
     }
 
-    private String generateDecleration(Declaration node) {
+    private String generateDeclaration(Declaration node) {
         String result = "";
         if (node.expression instanceof ColorLiteral) {
             ColorLiteral l = (ColorLiteral) node.expression;
