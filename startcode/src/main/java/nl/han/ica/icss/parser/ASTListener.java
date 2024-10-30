@@ -196,27 +196,27 @@ public class ASTListener extends ICSSBaseListener {
     }
 
     @Override
-    public void enterAddOperation(ICSSParser.AddOperationContext ctx) {
-        AddOperation addOperation = new AddOperation();
-        currentContainer.push(addOperation);
+    public void enterAddOrSubtractOperation(ICSSParser.AddOrSubtractOperationContext ctx) {
+        System.out.println(ctx.getTokens(ICSSParser.PLUS));
+        if(!ctx.getTokens(ICSSParser.PLUS).isEmpty()){
+            AddOperation addOperation = new AddOperation();
+            currentContainer.push(addOperation);
+        } else {
+            SubtractOperation subtractOperation = new SubtractOperation();
+            currentContainer.push(subtractOperation);
+        }
     }
 
     @Override
-    public void exitAddOperation(ICSSParser.AddOperationContext ctx) {
-        AddOperation addOperation = (AddOperation) currentContainer.pop();
-        currentContainer.peek().addChild(addOperation);
-    }
-
-    @Override
-    public void enterSubtractOperation(ICSSParser.SubtractOperationContext ctx) {
-        SubtractOperation subtractOperation = new SubtractOperation();
-        currentContainer.push(subtractOperation);
-    }
-
-    @Override
-    public void exitSubtractOperation(ICSSParser.SubtractOperationContext ctx) {
-        SubtractOperation subtractOperation = (SubtractOperation) currentContainer.pop();
-        currentContainer.peek().addChild(subtractOperation);
+    public void exitAddOrSubtractOperation(ICSSParser.AddOrSubtractOperationContext ctx) {
+        Operation operation = (Operation) currentContainer.pop();
+        if(operation instanceof AddOperation){
+            AddOperation addOperation = (AddOperation) operation;
+            currentContainer.peek().addChild(addOperation);
+        } else {
+            SubtractOperation subtractOperation = (SubtractOperation) operation;
+            currentContainer.peek().addChild(subtractOperation);
+        }
     }
 
     @Override

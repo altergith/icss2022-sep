@@ -56,8 +56,7 @@ value: (color | pixelSize | percentage | variableReference);
 
 expression
  : expression (MUL) expression #multiplyOperation
- | expression (PLUS) expression #addOperation
- | expression (MIN) expression #subtractOperation
+ | expression (PLUS|MIN) expression #addOrSubtractOperation
  | SCALAR #scalar
  | value #expressionValue;
 
