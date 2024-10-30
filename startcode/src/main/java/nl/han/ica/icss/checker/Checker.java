@@ -87,6 +87,7 @@ public class Checker {
 
     private void checkBody(ASTNode node, HashMap<String, ExpressionType> scope) {
         if (node instanceof VariableAssignment) {
+            checkVariableAssignment((VariableAssignment) node);
             scope.put(((VariableAssignment) node).name.name, getExpressionType(((VariableAssignment) node).expression));
         }
 
