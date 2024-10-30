@@ -153,7 +153,11 @@ public class Evaluator implements Transform {
     }
 
     private void applyDeclaration(Declaration node) {
-        node.expression = evalExpression(node.expression);
+        if(node.expression instanceof VariableReference){
+            node.expression = getValueOfVariableReference((VariableReference) node.expression);
+        } else {
+            node.expression = evalExpression(node.expression);
+        }
     }
 
     private Expression evalExpression(Expression expression) {

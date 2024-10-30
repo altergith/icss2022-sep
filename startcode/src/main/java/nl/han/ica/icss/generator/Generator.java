@@ -13,18 +13,18 @@ import java.util.Objects;
 
 public class Generator {
 
-	public String generate(AST ast) {
-        return generateStylesheet((Stylesheet)ast.root);
-
-
-	}
+    public String generate(AST ast) {
+        return generateStylesheet((Stylesheet) ast.root);
+    }
 
     private String generateStylesheet(Stylesheet node) {
         String result = "";
-        for (ASTNode child :node.getChildren()
-             ) {
-            result += generateStyleRule((Stylerule) child);
-            result += "\n";
+        for (ASTNode child : node.getChildren()
+        ) {
+            if (child instanceof Stylerule) {
+                result += generateStyleRule((Stylerule) child);
+                result += "\n";
+            }
         }
         return result;
     }
@@ -32,8 +32,8 @@ public class Generator {
     private String generateStyleRule(Stylerule stylerule) {
         String result = "";
         result += stylerule.selectors.get(0) + " {\n ";
-        for (ASTNode child: stylerule.body
-             ) {
+        for (ASTNode child : stylerule.body
+        ) {
             result += "\t";
             result += generateDecleration((Declaration) child);
             result += "\n";
@@ -44,18 +44,18 @@ public class Generator {
 
     private String generateDecleration(Declaration node) {
         String result = "";
-        if (node.expression instanceof ColorLiteral){
-            ColorLiteral l =  (ColorLiteral) node.expression;
+        if (node.expression instanceof ColorLiteral) {
+            ColorLiteral l = (ColorLiteral) node.expression;
             result += node.property.name + ": " + l.value;
         }
 
-        if (node.expression instanceof PixelLiteral){
-            PixelLiteral l =  (PixelLiteral) node.expression;
+        if (node.expression instanceof PixelLiteral) {
+            PixelLiteral l = (PixelLiteral) node.expression;
             result += node.property.name + ": " + l.value;
         }
 
-        if (node.expression instanceof PercentageLiteral){
-            PercentageLiteral l =  (PercentageLiteral) node.expression;
+        if (node.expression instanceof PercentageLiteral) {
+            PercentageLiteral l = (PercentageLiteral) node.expression;
             result += node.property.name + ": " + l.value;
         }
         return result;
