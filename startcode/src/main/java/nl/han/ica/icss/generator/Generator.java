@@ -30,14 +30,14 @@ public class Generator {
         for (ASTNode child : stylerule.body
         ) {
             result += "\t";
-            result += generateDecleration((Declaration) child);
+            result += generateDeclaration((Declaration) child);
             result += "\n";
         }
         result += "}";
         return result;
     }
 
-    private String generateDecleration(Declaration node) {
+    private String generateDeclaration(Declaration node) {
         String result = "";
         if (node.expression instanceof ColorLiteral) {
             ColorLiteral l = (ColorLiteral) node.expression;
@@ -46,12 +46,12 @@ public class Generator {
 
         if (node.expression instanceof PixelLiteral) {
             PixelLiteral l = (PixelLiteral) node.expression;
-            result += node.property.name + ": " + l.value;
+            result += node.property.name + ": " + l.value + "px";
         }
 
         if (node.expression instanceof PercentageLiteral) {
             PercentageLiteral l = (PercentageLiteral) node.expression;
-            result += node.property.name + ": " + l.value;
+            result += node.property.name + ": " + l.value + "%";
         }
         return result;
     }
